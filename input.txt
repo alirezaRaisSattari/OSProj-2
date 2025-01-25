@@ -1,0 +1,39 @@
+# Resource Allocation (R1/R2 per subsystem)
+5 3   # SS1 (Tight resources)
+4 2   # SS2 (Very constrained)
+15 10 # SS3 (Ample for borrowing)
+2 1   # SS4 (Extremely limited)
+
+# SS1 Tasks (name runtime r1 r2 entry_time target_core)
+A1 10 2 1 0 1    # Immediate core-bound
+A2 5 3 2 2 2     # Requires more R1 than available at start
+A3 8 1 1 3 3     # Late arrival
+A4 6 2 1 5 1     # Post-load-balancing
+A5 4 3 3 6 2     # Impossible resources (should stay pending)
+A6 7 1 1 0 3     # Long task in core 3
+
+$
+# SS2 Tasks (name runtime r1 r2 entry_time)
+B1 12 2 1 0       # Should get preempted
+B2 3 1 1 4        # Short high-priority
+B3 8 3 1 6        # Resource conflict
+B4 5 2 2 8        # Impossible resources (test rejection)
+B5 2 1 0 10       # Zero R2 usage
+
+$
+# SS3 Tasks (name runtime r1 r2 entry_time period repetitions)
+C1 5 12 7 0 15 2   # Heavy borrower
+C2 4 3 2 2 10 3    # Periodic medium
+C3 7 5 4 5 8 1     # Single execution
+C4 6 15 10 6 20 1  # Impossible even with borrowing
+
+$
+# SS4 Tasks (name runtime r1 r2 entry_time dependencies)
+D1 3 1 1 0 -             # Independent starter
+D2 5 2 1 2 D1           # Simple dependency
+D3 4 2 1 4 D2 D1        # Multiple dependencies
+D4 6 3 1 6 D3           # Chain dependency
+D5 2 1 1 8 D4           # Late dependent
+D6 7 2 1 10 D5,D3       # Cross-dependencies
+D7 4 2 1 0 -            # Parallel independent
+D8 5 3 1 12 D6,D7       # Complex dependency mix
